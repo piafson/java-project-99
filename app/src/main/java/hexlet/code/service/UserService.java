@@ -40,7 +40,7 @@ public class UserService {
     public UserDTO create(UserCreateDTO data) {
         var user = userMapper.map(data);
         var encodedPassword = passwordEncoder.encode(data.getPassword());
-        user.setPassword(encodedPassword);
+        user.setPasswordDigest(encodedPassword);
         userRepository.save(user);
         return userMapper.map(user);
     }
@@ -52,7 +52,7 @@ public class UserService {
 
         if (data.getPassword() != null) {
             var encodedPassword = passwordEncoder.encode(data.getPassword().get());
-            user.setPassword(encodedPassword);
+            user.setPasswordDigest(encodedPassword);
         }
 
         userRepository.save(user);

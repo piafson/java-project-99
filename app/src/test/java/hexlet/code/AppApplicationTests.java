@@ -12,13 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,23 +45,35 @@ class AppApplicationTests {
     @Autowired
     private Faker faker;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private JwtRequestPostProcessor token;
+
     private User testUser;
 
     @BeforeEach
-    public void create() {
+    public void create() throws Exception {
         testUser = Instancio.of(User.class)
                 .ignore(Select.field("id"))
+                .ignore(Select.field("passwordDigest"))
                 .supply(Select.field("firstName"), () -> faker.name().firstName())
                 .supply(Select.field("lastName"), () -> faker.name().lastName())
                 .supply(Select.field("email"), () -> faker.internet().emailAddress())
-                .supply(Select.field("password"), () -> faker.internet().password())
                 .create();
+
+        String password = faker.internet().password(3, 50);
+        String encodedPassword = passwordEncoder.encode(password);
+        testUser.setPasswordDigest(encodedPassword);
+
+        userRepository.save(testUser);
+
+        token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
     }
 
     @Test
     public void testIndex() throws Exception {
-        userRepository.save(testUser);
-        var result = mockMvc.perform(get("/api/users"))
+        var result = mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -70,7 +85,7 @@ class AppApplicationTests {
     public void testShow() throws Exception {
         userRepository.save(testUser);
 
-        var result = mockMvc.perform(get("/api/users/" + testUser.getId()))
+        var result = mockMvc.perform(get("/api/users/" + testUser.getId()).with(token))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -84,7 +99,8 @@ class AppApplicationTests {
 
     @Test
     public void testCreate() throws Exception {
-        var request = post("/api/users")
+        testUser.setEmail("ttt@yandex.ru");
+        var request = post("/api/users").with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(testUser));
 
@@ -99,10 +115,8 @@ class AppApplicationTests {
 
     @Test
     public void testUpdate() throws Exception {
-        userRepository.save(testUser);
-
         Map<String, String> data = new HashMap<>(Map.of("firstName", "Ivan", "email", "ttt@ya.ru"));
-        var request = put("/api/users/" + testUser.getId())
+        var request = put("/api/users/" + testUser.getId()).with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
@@ -116,9 +130,7 @@ class AppApplicationTests {
 
     @Test
     public void testDelete() throws Exception {
-        userRepository.save(testUser);
-
-        mockMvc.perform(delete("/api/users/" + testUser.getId()))
+        mockMvc.perform(delete("/api/users/" + testUser.getId()).with(token))
                 .andExpect(status().isNoContent());
 
         var user = userRepository.findById(testUser.getId()).orElse(null);
