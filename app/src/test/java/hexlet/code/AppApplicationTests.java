@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class AppApplicationTests {
 
     @Autowired
@@ -99,10 +101,11 @@ class AppApplicationTests {
 
     @Test
     public void testCreate() throws Exception {
-        testUser.setEmail("ttt@yandex.ru");
+        Map<String, String> data = new HashMap<>(Map.of("password", "333", "email", "ttt@ya.ru"));
+
         var request = post("/api/users").with(token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(testUser));
+                .content(om.writeValueAsString(data));
 
         mockMvc.perform(request).andExpect(status().isCreated());
 
@@ -116,6 +119,7 @@ class AppApplicationTests {
     @Test
     public void testUpdate() throws Exception {
         Map<String, String> data = new HashMap<>(Map.of("firstName", "Ivan", "email", "ttt@ya.ru"));
+
         var request = put("/api/users/" + testUser.getId()).with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
@@ -130,6 +134,7 @@ class AppApplicationTests {
 
     @Test
     public void testDelete() throws Exception {
+        System.out.println(userRepository.findAll());
         mockMvc.perform(delete("/api/users/" + testUser.getId()).with(token))
                 .andExpect(status().isNoContent());
 
