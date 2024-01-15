@@ -1,4 +1,4 @@
-package hexlet.code;
+package hexlet.code.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.model.User;
@@ -29,11 +29,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class AppApplicationTests {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -134,7 +133,6 @@ class AppApplicationTests {
 
     @Test
     public void testDelete() throws Exception {
-        System.out.println(userRepository.findAll());
         mockMvc.perform(delete("/api/users/" + testUser.getId()).with(token))
                 .andExpect(status().isNoContent());
 
