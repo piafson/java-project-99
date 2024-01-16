@@ -1,11 +1,9 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.UserCreateDTO;
-import hexlet.code.dto.UserDTO;
-import hexlet.code.dto.UserUpdateDTO;
-import hexlet.code.exception.AccessDeniedException;
-import hexlet.code.service.UserService;
-import hexlet.code.util.UserUtils;
+import hexlet.code.dto.TaskStatusCreateDTO;
+import hexlet.code.dto.TaskStatusDTO;
+import hexlet.code.dto.TaskStatusUpdateDTO;
+import hexlet.code.service.TaskStatusService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,51 +23,42 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/task_statuses")
+public class TaskStatusController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserUtils userUtils;
+    private TaskStatusService statusService;
 
     @GetMapping(path = "")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<UserDTO>> index() {
-        var users = userService.getAll();
+    public ResponseEntity<List<TaskStatusDTO>> index() {
+        var statuses = statusService.getAll();
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(users.size()))
-                .body(users);
+                .header("X-Total-Count", String.valueOf(statuses.size()))
+                .body(statuses);
     }
 
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO show(@PathVariable Long id) {
-        return userService.getById(id);
+    public TaskStatusDTO show(@PathVariable Long id) {
+        return statusService.getById(id);
     }
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@Valid @RequestBody UserCreateDTO data) {
-        return userService.create(data);
+    public TaskStatusDTO create(@Valid @RequestBody TaskStatusCreateDTO data) {
+        return statusService.create(data);
     }
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO data) {
-        if (userUtils.getCurrentUser().getId() != id) {
-            throw new AccessDeniedException("You don't have permission to update this user");
-        }
-        return userService.update(id, data);
+    public TaskStatusDTO update(@PathVariable Long id, @Valid @RequestBody TaskStatusUpdateDTO data) {
+        return statusService.update(id, data);
     }
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        if (userUtils.getCurrentUser().getId() != id) {
-            throw new AccessDeniedException("You don't have permission to delete this user");
-        }
-        userService.delete(id);
+        statusService.delete(id);
     }
 }

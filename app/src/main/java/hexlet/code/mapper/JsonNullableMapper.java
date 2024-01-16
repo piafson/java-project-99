@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.openapitools.jackson.nullable.JsonNullable;
 
-@Mapper (
+@Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 
