@@ -37,10 +37,10 @@ public class UserController {
     @GetMapping(path = "")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<UserDTO>> index() {
-        var users = userService.getAll();
+        List<UserDTO> usersDto = userService.getAll();
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(users.size()))
-                .body(users);
+                .header("X-Total-Count", String.valueOf(usersDto.size()))
+                .body(usersDto);
     }
 
     @GetMapping(path = "/{id}")

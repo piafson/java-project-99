@@ -32,11 +32,12 @@ public class DataInitializer implements ApplicationRunner {
         data.setPassword("qwerty");
         userService.create(data);
 
-        Map<String, String> statuses = new HashMap<>(
-                Map.of("draft", "В разработке", "to_review", "На рассмотрении",
-                        "to_be_fixed", "Должно быть исправлено",
-                        "to_publish", "Готово к публикации", "published", "Опубликовано")
-        );
+        Map<String, String> statuses = new HashMap<>();
+        statuses.put("draft", "Draft");
+        statuses.put("to_review", "ToReview");
+        statuses.put("to_be_fixed", "ToBeFixed");
+        statuses.put("to_publish", "ToPublish");
+        statuses.put("published", "Published");
 
         TaskStatusCreateDTO statusCreateDTO = new TaskStatusCreateDTO();
         for (Map.Entry<String, String> status : statuses.entrySet()) {

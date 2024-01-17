@@ -1,7 +1,10 @@
 package hexlet.code.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.model.User;
+import hexlet.code.model.Task;
+import hexlet.code.model.TaskStatus;
+import hexlet.code.repository.TaskRepository;
+import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 import net.datafaker.Faker;
@@ -12,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +33,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class UserControllerTest {
+public class TaskControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TaskStatusRepository statusRepository;
 
     @Autowired
     private ObjectMapper om;
@@ -46,93 +54,104 @@ public class UserControllerTest {
     private Faker faker;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private ModelGenerator modelGenerator;
+
+    private Task testTask;
+
+    private TaskStatus testStatus;
 
     private JwtRequestPostProcessor token;
 
-    private User testUser;
-
     @BeforeEach
     public void setUp() {
-        testUser = Instancio.of(modelGenerator.getUserModel())
-                        .create();
+        testTask = Instancio.of(modelGenerator.getTaskModel())
+                .create();
 
+        var testUser = Instancio.of(modelGenerator.getUserModel())
+                .create();
         userRepository.save(testUser);
-        token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+
+        testStatus = Instancio.of(modelGenerator.getStatusModel())
+                        .create();
+        statusRepository.save(testStatus);
+
+        testTask.setTaskStatus(testStatus);
+        testTask.setAssignee(testUser);
+        taskRepository.save(testTask);
+        token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     }
 
     @Test
     public void testIndex() throws Exception {
-        var result = mockMvc.perform(get("/api/users").with(token))
+        var result = mockMvc.perform(get("/api/tasks").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
-
         var body = result.getResponse().getContentAsString();
         assertThatJson(body).isArray().isNotEmpty();
     }
 
     @Test
     public void testShow() throws Exception {
-        userRepository.save(testUser);
-
-        var result = mockMvc.perform(get("/api/users/" + testUser.getId()).with(token))
+        var result = mockMvc.perform(get("/api/tasks/" + testTask.getId()).with(token))
                 .andExpect(status().isOk())
                 .andReturn();
-
         var body = result.getResponse().getContentAsString();
         assertThatJson(body).and(
-                a -> a.node("firstName").isEqualTo(testUser.getFirstName()),
-                a -> a.node("lastName").isEqualTo(testUser.getLastName()),
-                a -> a.node("email").isEqualTo(testUser.getEmail())
+                a -> a.node("title").isEqualTo(testTask.getName()),
+                a -> a.node("index").isEqualTo(testTask.getIndex()),
+                a -> a.node("content").isEqualTo(testTask.getDescription()),
+                a -> a.node("status").isEqualTo(testTask.getTaskStatus().getSlug()),
+                a -> a.node("assignee_id").isEqualTo(testTask.getAssignee().getId())
         );
     }
 
     @Test
     public void testCreate() throws Exception {
         var data = new HashMap<>();
-        data.put("password", "333");
-        data.put("email", "ttt@ya.ru");
+        data.put("title", "ThisTitle");
+        data.put("content", "ThisContent");
+        data.put("status", testStatus.getSlug());
 
-        var request = post("/api/users").with(token)
+        var request = post("/api/tasks").with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
-        mockMvc.perform(request).andExpect(status().isCreated());
+        mockMvc.perform(request)
+                .andExpect(status().isCreated());
 
-        var user = userRepository.findByEmail(testUser.getEmail()).orElse(null);
-        assertThat(user).isNotNull();
-        assertThat(user.getFirstName()).isEqualTo(testUser.getFirstName());
-        assertThat(user.getLastName()).isEqualTo(testUser.getLastName());
-        assertThat(user.getEmail()).isEqualTo(testUser.getEmail());
+        var task = taskRepository.findByName(data.get("title").toString()).orElse(null);
+        assertThat(task).isNotNull();
+        assertThat(task.getName()).isEqualTo(data.get("title"));
+        assertThat(task.getIndex()).isNull();
+        assertThat(task.getDescription()).isEqualTo(data.get("content"));
+        assertThat(task.getTaskStatus()).isEqualTo(testStatus);
+        assertThat(task.getAssignee()).isNull();
     }
 
     @Test
     public void testUpdate() throws Exception {
         var data = new HashMap<>();
-        data.put("firstName", "Ivan");
-        data.put("email", "ttt@ya.ru");
+        data.put("title", "NewTitle");
 
-        var request = put("/api/users/" + testUser.getId()).with(token)
+        var request = put("/api/tasks/" + testTask.getId()).with(token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
-        mockMvc.perform(request).andExpect(status().isOk());
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
 
-        var user = userRepository.findByEmail("ttt@ya.ru").orElse(null);
-        assertThat(user).isNotNull();
-        assertThat(user.getFirstName()).isEqualTo("Ivan");
-        assertThat(user.getLastName()).isEqualTo(testUser.getLastName());
+        var task = taskRepository.findById(testTask.getId()).orElse(null);
+        assertThat(task).isNotNull();
+        assertThat(task.getName()).isEqualTo("NewTitle");
+        assertThat(task.getIndex()).isEqualTo(testTask.getIndex());
     }
 
     @Test
     public void testDelete() throws Exception {
-        mockMvc.perform(delete("/api/users/" + testUser.getId()).with(token))
+        mockMvc.perform(delete("/api/tasks/" + testTask.getId()).with(token))
                 .andExpect(status().isNoContent());
 
-        var user = userRepository.findById(testUser.getId()).orElse(null);
-        assertThat(user).isNull();
+        var task = taskRepository.findById(testTask.getId()).orElse(null);
+        assertThat(task).isNull();
     }
 }

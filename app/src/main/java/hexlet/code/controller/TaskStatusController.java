@@ -32,10 +32,10 @@ public class TaskStatusController {
     @GetMapping(path = "")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TaskStatusDTO>> index() {
-        var statuses = statusService.getAll();
+        List<TaskStatusDTO> statusesDto = statusService.getAll();
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(statuses.size()))
-                .body(statuses);
+                .header("X-Total-Count", String.valueOf(statusesDto.size()))
+                .body(statusesDto);
     }
 
     @GetMapping(path = "/{id}")

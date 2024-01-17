@@ -3,7 +3,9 @@ package hexlet.code.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
+import hexlet.code.util.ModelGenerator;
 import net.datafaker.Faker;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -43,16 +44,18 @@ public class TaskStatusControllerTest {
     @Autowired
     private Faker faker;
 
+    @Autowired
+    private ModelGenerator modelGenerator;
+
     private TaskStatus testStatus = new TaskStatus();
 
     private JwtRequestPostProcessor token;
 
     @BeforeEach
-    public void create() throws Exception {
-        testStatus.setName(faker.animal().name());
-        testStatus.setSlug(faker.lorem().word());
+    public void setUp() {
+        testStatus = Instancio.of(modelGenerator.getStatusModel())
+                .create();
         taskStatusRepository.save(testStatus);
-
         token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     }
 
@@ -81,7 +84,9 @@ public class TaskStatusControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        Map<String, String> data = new HashMap<>(Map.of("name", "Name", "slug", "Slug"));
+        var data = new HashMap<>();
+        data.put("name", "Name");
+        data.put("slug", "Slug");
 
         var request = post("/api/task_statuses").with(token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +102,8 @@ public class TaskStatusControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        Map<String, String> data = new HashMap<>(Map.of("name", "NewName"));
+        var data = new HashMap<>();
+        data.put("name", "NewName");
 
         var request = put("/api/task_statuses/" + testStatus.getId()).with(token)
                 .contentType(MediaType.APPLICATION_JSON)

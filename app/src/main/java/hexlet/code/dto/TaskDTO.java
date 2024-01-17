@@ -7,10 +7,12 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
-public class UserDTO {
+public class TaskDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private String title;
+    private Integer index;
+    private String content;
+    private String status;
+    private Long assignee_id;
     private LocalDate createdAt;
 }
