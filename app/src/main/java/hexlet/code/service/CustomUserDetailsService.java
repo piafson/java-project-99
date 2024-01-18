@@ -1,7 +1,7 @@
 package hexlet.code.service;
 
 import hexlet.code.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 
 import hexlet.code.repository.UserRepository;
 @Service
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsManager {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

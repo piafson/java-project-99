@@ -61,6 +61,4 @@ public class AuthenticationControllerTest {
         var result = mockMvc.perform(request)
                 .andExpect(status().isUnauthorized());
     }
-
-
 }

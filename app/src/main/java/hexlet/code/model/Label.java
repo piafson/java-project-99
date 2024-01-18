@@ -6,10 +6,10 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import lombok.EqualsAndHashCode;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,28 +20,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "labels")
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(of = "id")
 @Setter
 @Getter
-public class TaskStatus implements BaseEntity {
+public class Label {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Size(min = 3, max = 1000)
     @Column(unique = true)
-    @NotBlank
     private String name;
 
-    @Column(unique = true)
-    @NotBlank
-    private String slug;
-
-    @OneToMany(mappedBy = "taskStatus")
+    @ManyToMany(mappedBy = "labels")
     private List<Task> tasks = new ArrayList<>();
 
     @CreatedDate
-    private LocalDate cratedAt;
+    private LocalDate createdAt;
 }
