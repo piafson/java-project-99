@@ -1,8 +1,10 @@
 package hexlet.code.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.model.Label;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -20,6 +22,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -48,6 +52,9 @@ public class TaskControllerTest {
     private TaskStatusRepository statusRepository;
 
     @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private ObjectMapper om;
 
     @Autowired
@@ -59,6 +66,8 @@ public class TaskControllerTest {
     private Task testTask;
 
     private TaskStatus testStatus;
+
+    private Label testLabel;
 
     private JwtRequestPostProcessor token;
 
@@ -75,19 +84,35 @@ public class TaskControllerTest {
                         .create();
         statusRepository.save(testStatus);
 
+        testLabel = Instancio.of(modelGenerator.getLabelModel())
+                        .create();
+        labelRepository.save(testLabel);
+
         testTask.setTaskStatus(testStatus);
         testTask.setAssignee(testUser);
+        testTask.setLabels(new HashSet<>(List.of(testLabel)));
         taskRepository.save(testTask);
         token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     }
 
     @Test
     public void testIndex() throws Exception {
-        var result = mockMvc.perform(get("/api/tasks").with(token))
+        var result = mockMvc.perform(get("/api/tasks").with(token)
+                        .param("titleCont", testTask.getName())
+                        .param("assigneeId", String.valueOf(testTask.getAssignee().getId()))
+                        .param("status", testStatus.getSlug())
+                        .param("labelId", String.valueOf(testLabel.getId())))
                 .andExpect(status().isOk())
                 .andReturn();
         var body = result.getResponse().getContentAsString();
         assertThatJson(body).isArray().isNotEmpty();
+
+        var result2 = mockMvc.perform(get("/api/tasks").with(token)
+                .param("assigneeId", "000"))
+                .andExpect(status().isOk())
+                .andReturn();
+        var body2 = result2.getResponse().getContentAsString();
+        assertThatJson(body2).isArray().isEmpty();
     }
 
     @Test
