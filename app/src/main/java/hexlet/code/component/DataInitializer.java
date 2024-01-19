@@ -8,6 +8,7 @@ import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.service.LabelService;
 import hexlet.code.service.TaskStatusService;
 import hexlet.code.service.UserService;
+import io.sentry.Sentry;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -30,6 +31,12 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments arguments) throws Exception {
+        try {
+            throw new Exception("This is a test.");
+        } catch (Exception e) {
+            Sentry.captureException(e);
+        }
+
         var data = new UserCreateDTO();
         data.setFirstName("Ivan");
         data.setLastName("Rurik");

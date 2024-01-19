@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,7 +76,7 @@ public class TaskStatusControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        var body = result.getResponse().getContentAsString();
+        var body = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThatJson(body).and(
                 a -> a.node("name").isEqualTo(testStatus.getName()),
                 a -> a.node("slug").isEqualTo(testStatus.getSlug())

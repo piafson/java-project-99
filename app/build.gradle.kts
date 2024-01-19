@@ -8,6 +8,7 @@ plugins {
 	id("io.freefair.lombok") version "8.4"
 	id("org.springframework.boot") version "3.2.1"
 	id("io.spring.dependency-management") version "1.1.4"
+	id("io.sentry.jvm.gradle") version "4.2.0"
 }
 
 group = "hexlet.code"
@@ -16,6 +17,20 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
 	mavenCentral()
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+
+sentry {
+	includeSourceContext = true
+
+	org = "piafson"
+	projectName = "java"
+	authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 application {

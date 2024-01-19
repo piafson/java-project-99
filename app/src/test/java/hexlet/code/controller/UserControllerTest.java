@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,7 +83,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        var body = result.getResponse().getContentAsString();
+        var body = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThatJson(body).and(
                 a -> a.node("firstName").isEqualTo(testUser.getFirstName()),
                 a -> a.node("lastName").isEqualTo(testUser.getLastName()),
