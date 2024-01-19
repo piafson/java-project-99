@@ -38,14 +38,13 @@ public class DataInitializer implements ApplicationRunner {
         } catch (Exception e) {
             Sentry.captureException(e);
         }
-        if (userRepository.findByEmail("hexlet@example.com").isEmpty()) {
-            var data = new UserCreateDTO();
-            data.setFirstName("Ivan");
-            data.setLastName("Rurik");
-            data.setEmail("hexlet@example.com");
-            data.setPassword("qwerty");
-            userService.create(data);
-        }
+
+        var data = new UserCreateDTO();
+        data.setFirstName("Ivan");
+        data.setLastName("Rurik");
+        data.setEmail("hexlet@example.com");
+        data.setPassword("qwerty");
+        userService.create(data);
 
         Map<String, String> statuses = new HashMap<>();
         statuses.put("draft", "Draft");

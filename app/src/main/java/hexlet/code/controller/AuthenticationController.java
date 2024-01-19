@@ -1,12 +1,14 @@
 package hexlet.code.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +31,14 @@ public class AuthenticationController {
     public String create(
             @Parameter(description = "Your login and password")
             @RequestBody AuthRequest authRequest) {
-        var authentication = new UsernamePasswordAuthenticationToken(
-            authRequest.getUsername(), authRequest.getPassword());
-
-        authenticationManager.authenticate(authentication);
-
-        var token = jwtUtils.generateToken(authRequest.getUsername());
-        return token;
+        try {
+            var authenticationToken = new UsernamePasswordAuthenticationToken(
+                    authRequest.getUsername(), authRequest.getPassword());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            var token = jwtUtils.generateToken(authentication.getName());
+            return token;
+        } catch (AuthenticationException ex) {
+            throw new BadCredentialsException("Invalid username/password");
+        }
     }
 }

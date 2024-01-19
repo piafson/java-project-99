@@ -39,6 +39,7 @@ public class User implements BaseEntity, UserDetails {
     private String lastName;
 
     @Column(unique = true)
+    @NotBlank
     @Email
     private String email;
 
