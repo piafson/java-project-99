@@ -14,6 +14,9 @@ jobs:
         with:
           java-version: '20'
           distribution: 'temurin'
+      - run: make -C app build
+        env:
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
