@@ -4,7 +4,6 @@ import hexlet.code.dto.UserCreateDTO;
 import hexlet.code.dto.UserDTO;
 import hexlet.code.dto.UserUpdateDTO;
 import hexlet.code.service.UserService;
-import hexlet.code.util.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +34,6 @@ public class UserController {
 
 
     private final UserService userService;
-    private final UserUtils userUtils;
 
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Get list of all users")

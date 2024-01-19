@@ -23,6 +23,7 @@ import hexlet.code.util.JWTUtils;
 public class AuthenticationController {
 
     private final JWTUtils jwtUtils;
+
     private final AuthenticationManager authenticationManager;
 
     @Operation(summary = "User authentication")

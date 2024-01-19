@@ -5,7 +5,6 @@ import hexlet.code.dto.TaskStatusCreateDTO;
 import hexlet.code.dto.UserCreateDTO;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.service.LabelService;
 import hexlet.code.service.TaskStatusService;
 import hexlet.code.service.UserService;
@@ -25,11 +24,14 @@ import java.util.Map;
 public class DataInitializer implements ApplicationRunner {
 
     private final UserService userService;
+
     private final TaskStatusService statusService;
+
     private final TaskStatusRepository statusRepository;
+
     private final LabelRepository labelRepository;
+
     private final LabelService labelService;
-    private final UserRepository userRepository;
 
     @Override
     public void run(ApplicationArguments arguments) throws Exception {

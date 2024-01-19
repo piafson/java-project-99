@@ -21,7 +21,9 @@ public class TaskService {
 
 
     private final TaskRepository taskRepository;
+
     private final TaskMapper taskMapper;
+
     private final TaskSpecification taskSpecification;
 
     public List<TaskDTO> getAll(TaskParamsDTO paramsDTO) {
