@@ -1,13 +1,13 @@
 build:
-	./app/gradlew clean build
+	./gradlew clean build
 
 report:
-	./app/gradlew jacocoTestReport
+	./gradlew jacocoTestReport
 
 install-dist:
-	./app/gradlew clean installDist
+	./gradlew clean installDist
 
 start-dist:
-	./app/build/install/app/bin/app
+	./build/install/app/bin/app
 
 .PHONY: build
