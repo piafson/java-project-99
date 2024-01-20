@@ -4,5 +4,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/9e83ac2464452294bc79/maintainability)](https://codeclimate.com/github/piafson/java-project-99/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9e83ac2464452294bc79/test_coverage)](https://codeclimate.com/github/piafson/java-project-99/test_coverage)
 
+### Description:
+Task Manager is a task management system. It allows you to set tasks, assign performers and change their statuses. To work with the system, registration and authentication are required.
+
 ### Demo:
 ["https://java-project-99-czju.onrender.com/welcome"](https://java-project-99-czju.onrender.com/welcome)
