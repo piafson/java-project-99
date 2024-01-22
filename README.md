@@ -8,4 +8,5 @@
 Task Manager is a task management system. It allows you to set tasks, assign performers and change their statuses. To work with the system, registration and authentication are required.
 
 ### Demo:
-["https://java-project-99-czju.onrender.com"](https://java-project-99-czju.onrender.com)
+["Task_Manager"](https://java-project-99-czju.onrender.com)
+["REST_API"](https://java-project-99-czju.onrender.com/swagger-ui/index.html)
