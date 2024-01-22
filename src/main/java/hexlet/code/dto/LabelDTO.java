@@ -1,14 +1,17 @@
 package hexlet.code.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LabelDTO {
     private Long id;
-    private String name;
+    private JsonNullable<String> name;
     private LocalDate createdAt;
 }

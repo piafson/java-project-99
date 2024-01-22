@@ -1,8 +1,6 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.LabelCreateDTO;
 import hexlet.code.dto.LabelDTO;
-import hexlet.code.dto.LabelUpdateDTO;
 import hexlet.code.service.LabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -66,7 +64,8 @@ public class LabelController {
     @ResponseStatus(HttpStatus.CREATED)
     public LabelDTO create(
             @Parameter(description = "Label data to save")
-            @Valid @RequestBody LabelCreateDTO data) {
+            //@Valid @RequestBody LabelCreateDTO data) {
+            @Valid @RequestBody LabelDTO data) {
         return labelService.create(data);
     }
 
@@ -82,7 +81,8 @@ public class LabelController {
             @Parameter(description = "Id of label to be updated")
             @PathVariable Long id,
             @Parameter(description = "Label data to update")
-            @Valid @RequestBody LabelUpdateDTO data) {
+            //@Valid @RequestBody LabelUpdateDTO data) {
+            @Valid @RequestBody LabelDTO data) {
         return labelService.update(id, data);
     }
 
