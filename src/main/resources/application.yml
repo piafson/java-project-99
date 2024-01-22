@@ -16,6 +16,10 @@ springdoc:
   swagger-ui:
     path: /swagger.html
 
+server:
+  address: 0.0.0.0
+  port: ${PORT:8080}
+
 
 sentry:
   dsn: https://82cfa8b18e929161d2d251a19148b95c@o4506590919655424.ingest.sentry.io/4506591131402240
