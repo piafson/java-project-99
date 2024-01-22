@@ -61,7 +61,6 @@ public class DataInitializer implements ApplicationRunner {
         });
 
         var labels = new ArrayList<>(List.of("bug", "feature"));
-        //LabelCreateDTO labelData = new LabelCreateDTO();
         LabelDTO labelData = new LabelDTO();
         labels.forEach(label -> {
             if (labelRepository.findByName(label).isEmpty()) {
