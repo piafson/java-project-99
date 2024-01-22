@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LabelDTO {
-    private Long id;
+    private JsonNullable<Long> id;
     private JsonNullable<String> name;
-    private LocalDate createdAt;
+    private JsonNullable<LocalDate> createdAt;
 }
