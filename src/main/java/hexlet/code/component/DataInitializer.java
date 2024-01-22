@@ -2,16 +2,16 @@ package hexlet.code.component;
 
 import hexlet.code.dto.LabelCreateDTO;
 import hexlet.code.dto.TaskStatusCreateDTO;
-import hexlet.code.dto.UserCreateDTO;
+import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
+import hexlet.code.repository.UserRepository;
 import hexlet.code.service.LabelService;
 import hexlet.code.service.TaskStatusService;
-import hexlet.code.service.UserService;
-import io.sentry.Sentry;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    private final UserService userService;
+    private UserRepository userRepository;
 
     private final TaskStatusService statusService;
 
@@ -33,20 +33,15 @@ public class DataInitializer implements ApplicationRunner {
 
     private final LabelService labelService;
 
+    private final PasswordEncoder encoder;
+
     @Override
     public void run(ApplicationArguments arguments) throws Exception {
-        try {
-            throw new Exception("This is a test.");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-        }
 
-        var data = new UserCreateDTO();
-        data.setFirstName("Ivan");
-        data.setLastName("Rurik");
+        var data = new User();
         data.setEmail("hexlet@example.com");
-        data.setPassword("qwerty");
-        userService.create(data);
+        data.setPasswordDigest(encoder.encode("qwerty"));
+        userRepository.save(data);
 
         Map<String, String> statuses = new HashMap<>();
         statuses.put("draft", "Draft");
@@ -64,7 +59,7 @@ public class DataInitializer implements ApplicationRunner {
             }
         });
 
-        List<String> labels = new ArrayList<>(List.of("bug", "feature"));
+        var labels = new ArrayList<>(List.of("bug", "feature"));
         LabelCreateDTO labelData = new LabelCreateDTO();
         labels.forEach(label -> {
             if (labelRepository.findByName(label).isEmpty()) {
