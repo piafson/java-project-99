@@ -43,5 +43,5 @@ public class TaskStatus implements BaseEntity {
     private List<Task> tasks = new ArrayList<>();
 
     @CreatedDate
-    private LocalDate cratedAt;
+    private LocalDate createdAt;
 }
