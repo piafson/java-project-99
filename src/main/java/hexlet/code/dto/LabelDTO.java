@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.openapitools.jackson.nullable.JsonNullable;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +13,5 @@ import java.time.LocalDate;
 public class LabelDTO {
     private JsonNullable<Long> id;
     private JsonNullable<String> name;
-    private JsonNullable<LocalDate> createdAt;
+    private JsonNullable<Date> createdAt;
 }
