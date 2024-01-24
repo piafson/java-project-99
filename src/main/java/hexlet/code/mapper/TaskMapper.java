@@ -1,8 +1,6 @@
 package hexlet.code.mapper;
 
-import hexlet.code.dto.TaskCreateDTO;
 import hexlet.code.dto.TaskDTO;
-import hexlet.code.dto.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.model.Label;
 import hexlet.code.model.Task;
@@ -37,15 +35,13 @@ public abstract class TaskMapper {
     @Autowired
     private LabelRepository labelRepository;
 
-    private final String defaultContent = "";
 
     @Mapping(source = "title", target = "name")
     @Mapping(source = "status", target = "taskStatus")
     @Mapping(source = "assignee_id", target = "assignee")
     @Mapping(source = "taskLabelIds", target = "labels")
-    @Mapping(target = "description",
-             expression = "java(dto.getContent() == null ? getDefaultContent() : dto.getContent())")
-    public abstract Task map(TaskCreateDTO dto);
+    @Mapping(source = "content", target = "description")
+    public abstract Task map(TaskDTO dto);
 
     @Mapping(source = "name", target = "title")
     @Mapping(source = "description", target = "content")
@@ -59,7 +55,7 @@ public abstract class TaskMapper {
     @Mapping(source = "status", target = "taskStatus")
     @Mapping(source = "assignee_id", target = "assignee")
     @Mapping(source = "taskLabelIds", target = "labels")
-    public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
+    public abstract void update(TaskDTO dto, @MappingTarget Task model);
 
     public TaskStatus toTaskStatus(String statusSlug) {
         return statusRepository.findBySlug(statusSlug)

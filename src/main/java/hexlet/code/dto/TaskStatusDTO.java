@@ -1,15 +1,27 @@
 package hexlet.code.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.openapitools.jackson.nullable.JsonNullable;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-@Setter
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskStatusDTO {
-    private Long id;
-    private String name;
-    private String slug;
-    private Date createdAt;
+
+    private JsonNullable<Long> id;
+
+    @NotBlank
+    private JsonNullable<String> name;
+
+    @NotBlank
+    private JsonNullable<String> slug;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private JsonNullable<LocalDate> createdAt;
 }

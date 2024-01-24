@@ -1,9 +1,7 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.TaskCreateDTO;
 import hexlet.code.dto.TaskDTO;
 import hexlet.code.dto.TaskParamsDTO;
-import hexlet.code.dto.TaskUpdateDTO;
 import hexlet.code.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,7 +66,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.CREATED)
     public TaskDTO create(
             @Parameter(description = "Task data to save")
-            @Valid @RequestBody TaskCreateDTO data) {
+            @Valid @RequestBody TaskDTO data) {
         return taskService.create(data);
     }
 
@@ -84,7 +82,7 @@ public class TaskController {
             @Parameter(description = "Id of task to be updated")
             @PathVariable Long id,
             @Parameter(description = "Task data to update")
-            @Valid @RequestBody TaskUpdateDTO data) {
+            @Valid @RequestBody TaskDTO data) {
         return taskService.update(id, data);
     }
 

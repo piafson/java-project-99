@@ -1,7 +1,7 @@
 package hexlet.code.component;
 
 import hexlet.code.dto.LabelDTO;
-import hexlet.code.dto.TaskStatusCreateDTO;
+import hexlet.code.dto.TaskStatusDTO;
 import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
@@ -51,11 +51,11 @@ public class DataInitializer implements ApplicationRunner {
         statuses.put("to_publish", "ToPublish");
         statuses.put("published", "Published");
 
-        TaskStatusCreateDTO statusCreateDTO = new TaskStatusCreateDTO();
+        TaskStatusDTO statusCreateDTO = new TaskStatusDTO();
         statuses.forEach((key, value) -> {
             if (statusRepository.findBySlug(key).isEmpty()) {
-                statusCreateDTO.setSlug(key);
-                statusCreateDTO.setName(value);
+                statusCreateDTO.setSlug(JsonNullable.of(key));
+                statusCreateDTO.setName(JsonNullable.of(value));
                 statusService.create(statusCreateDTO);
             }
         });

@@ -64,7 +64,6 @@ public class LabelController {
     @ResponseStatus(HttpStatus.CREATED)
     public LabelDTO create(
             @Parameter(description = "Label data to save")
-            //@Valid @RequestBody LabelCreateDTO data) {
             @Valid @RequestBody LabelDTO data) {
         return labelService.create(data);
     }
@@ -81,7 +80,6 @@ public class LabelController {
             @Parameter(description = "Id of label to be updated")
             @PathVariable Long id,
             @Parameter(description = "Label data to update")
-            //@Valid @RequestBody LabelUpdateDTO data) {
             @Valid @RequestBody LabelDTO data) {
         return labelService.update(id, data);
     }

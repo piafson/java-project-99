@@ -1,8 +1,6 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.TaskStatusCreateDTO;
 import hexlet.code.dto.TaskStatusDTO;
-import hexlet.code.dto.TaskStatusUpdateDTO;
 import hexlet.code.service.TaskStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -67,7 +65,7 @@ public class TaskStatusController {
     @ResponseStatus(HttpStatus.CREATED)
     public TaskStatusDTO create(
             @Parameter(description = "Status data to save")
-            @Valid @RequestBody TaskStatusCreateDTO data) {
+            @Valid @RequestBody TaskStatusDTO data) {
         return statusService.create(data);
     }
 
@@ -83,7 +81,7 @@ public class TaskStatusController {
             @Parameter(description = "Id of status to be updated")
             @PathVariable Long id,
             @Parameter(description = "Status data to update")
-            @Valid @RequestBody TaskStatusUpdateDTO data) {
+            @Valid @RequestBody TaskStatusDTO data) {
         return statusService.update(id, data);
     }
 
