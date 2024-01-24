@@ -1,8 +1,6 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.UserCreateDTO;
 import hexlet.code.dto.UserDTO;
-import hexlet.code.dto.UserUpdateDTO;
 import hexlet.code.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,7 +66,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(
             @Parameter(description = "User data to save")
-            @Valid @RequestBody UserCreateDTO data) {
+            @Valid @RequestBody UserDTO data) {
         return userService.create(data);
     }
 
@@ -84,7 +82,7 @@ public class UserController {
             @Parameter(description = "Id of user to be updated")
             @PathVariable Long id,
             @Parameter(description = "User data to update")
-            @Valid @RequestBody UserUpdateDTO data) {
+            @Valid @RequestBody UserDTO data) {
         return userService.update(id, data);
     }
 
