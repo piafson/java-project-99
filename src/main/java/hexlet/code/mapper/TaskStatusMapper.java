@@ -2,6 +2,7 @@ package hexlet.code.mapper;
 
 import hexlet.code.dto.TaskStatusDTO;
 import hexlet.code.model.TaskStatus;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
@@ -20,5 +21,6 @@ public abstract class TaskStatusMapper {
 
     public abstract TaskStatusDTO map(TaskStatus model);
 
+    @InheritConfiguration
     public abstract void update(TaskStatusDTO dto, @MappingTarget TaskStatus model);
 }

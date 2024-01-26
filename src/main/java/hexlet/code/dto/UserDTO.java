@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    private Long id;
+    private JsonNullable<Long> id;
 
     private JsonNullable<String> firstName;
 
