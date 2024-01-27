@@ -1,9 +1,8 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.UserCreateDTO;
 import hexlet.code.dto.UserDTO;
-import hexlet.code.dto.UserUpdateDTO;
 import hexlet.code.service.UserService;
+import hexlet.code.util.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,6 +34,8 @@ public class UserController {
 
 
     private final UserService userService;
+
+    private final UserUtils userUtils;
 
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Get list of all users")
@@ -68,7 +70,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(
             @Parameter(description = "User data to save")
-            @Valid @RequestBody UserCreateDTO data) {
+            @Valid @RequestBody UserDTO data) {
         return userService.create(data);
     }
 
@@ -84,7 +86,7 @@ public class UserController {
             @Parameter(description = "Id of user to be updated")
             @PathVariable Long id,
             @Parameter(description = "User data to update")
-            @Valid @RequestBody UserUpdateDTO data) {
+            @Valid @RequestBody UserDTO data) {
         return userService.update(id, data);
     }
 
@@ -99,6 +101,10 @@ public class UserController {
     public void delete(
             @Parameter(description = "Id of user to be deleted")
             @PathVariable Long id) {
-        userService.delete(id);
+        var user = userUtils.getCurrentUser();
+
+        if (Objects.equals(user.getId(), id)) {
+            userService.delete(id);
+        }
     }
 }
