@@ -1,6 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.dto.UserDTO;
+import hexlet.code.exception.AccessDeniedException;
 import hexlet.code.service.UserService;
 import hexlet.code.util.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,7 +88,13 @@ public class UserController {
             @PathVariable Long id,
             @Parameter(description = "User data to update")
             @Valid @RequestBody UserDTO data) {
-        return userService.update(id, data);
+        var user = userUtils.getCurrentUser();
+
+        if (Objects.equals(user.getId(), id)) {
+            return userService.update(id, data);
+        } else {
+            throw new AccessDeniedException("You do not have the rights to perform this operation");
+        }
     }
 
     @SecurityRequirement(name = "JWT")
@@ -105,6 +112,8 @@ public class UserController {
 
         if (Objects.equals(user.getId(), id)) {
             userService.delete(id);
+        } else {
+            throw new AccessDeniedException("You do not have the rights to perform this operation");
         }
     }
 }
